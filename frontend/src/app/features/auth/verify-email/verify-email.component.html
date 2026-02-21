@@ -1,0 +1,42 @@
+<div class="text-center py-8">
+  <!-- Loading -->
+  @if (loading$ | async) {
+    <div class="mx-auto w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-4">
+      <svg class="animate-spin w-8 h-8 text-primary-500" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+      </svg>
+    </div>
+    <h2 class="text-2xl font-bold text-neutral-900 mb-2">Verifying your email...</h2>
+    <p class="text-neutral-500">Please wait while we confirm your email address.</p>
+  }
+
+  <!-- Success -->
+  @if (success$ | async) {
+    <div class="mx-auto w-16 h-16 bg-success-50 rounded-full flex items-center justify-center mb-4">
+      <svg class="w-8 h-8 text-success-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+    </div>
+    <h2 class="text-2xl font-bold text-neutral-900 mb-2">Email verified!</h2>
+    <p class="text-neutral-500 mb-6">Your email has been confirmed. You can now sign in.</p>
+    <a routerLink="/auth/login"
+       class="inline-flex items-center px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-primary-600 hover:bg-primary-700 transition-colors">
+      Continue to sign in
+    </a>
+  }
+
+  <!-- Error -->
+  @if (error$ | async; as error) {
+    <div class="mx-auto w-16 h-16 bg-error-50 rounded-full flex items-center justify-center mb-4">
+      <svg class="w-8 h-8 text-error-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+      </svg>
+    </div>
+    <h2 class="text-2xl font-bold text-neutral-900 mb-2">Verification failed</h2>
+    <p class="text-neutral-500 mb-6">{{ error }}</p>
+    <a routerLink="/auth/login" class="text-primary-600 hover:text-primary-500 font-semibold text-sm">
+      Back to sign in
+    </a>
+  }
+</div>

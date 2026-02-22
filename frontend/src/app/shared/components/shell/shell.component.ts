@@ -59,6 +59,14 @@ import * as NotificationActions from '../../../store/notifications/notification.
             </svg>
             Categories
           </a>
+          <a routerLink="/profile" routerLinkActive="bg-primary-50 text-primary-700 font-medium"
+             class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900 transition-colors text-sm">
+            <svg class="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+            </svg>
+            Profile
+          </a>
         </nav>
 
         <!-- Notification bell + User section -->
@@ -115,7 +123,7 @@ import * as NotificationActions from '../../../store/notifications/notification.
           </div>
 
           @if (user$ | async; as user) {
-            <div class="flex items-center gap-3 mb-3">
+            <a routerLink="/profile" class="flex items-center gap-3 mb-3 px-1 py-1 rounded-lg hover:bg-neutral-50 transition-colors cursor-pointer">
               <div class="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center flex-shrink-0">
                 <span class="text-primary-700 font-semibold text-sm">{{ user.firstName[0] }}{{ user.lastName[0] }}</span>
               </div>
@@ -123,7 +131,7 @@ import * as NotificationActions from '../../../store/notifications/notification.
                 <p class="text-sm font-medium text-neutral-900 truncate">{{ user.firstName }} {{ user.lastName }}</p>
                 <p class="text-xs text-neutral-500 truncate">{{ user.email }}</p>
               </div>
-            </div>
+            </a>
           }
           <button (click)="logout()"
             class="w-full flex items-center gap-2 px-3 py-2 text-sm text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50 rounded-lg transition-colors">

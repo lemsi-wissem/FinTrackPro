@@ -2,9 +2,10 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { catchError, exhaustMap, map, tap } from 'rxjs/operators';
+import { catchError, exhaustMap, map, switchMap, tap } from 'rxjs/operators';
 import { AuthService } from '../../core/services/auth.service';
 import { TokenService } from '../../core/services/token.service';
+import { UserService } from '../../core/services/user.service';
 import * as AuthActions from './auth.actions';
 
 @Injectable()
@@ -12,6 +13,7 @@ export class AuthEffects {
   constructor(
     private actions$: Actions,
     private authService: AuthService,
+    private userService: UserService,
     private tokenService: TokenService,
     private router: Router,
   ) {}
@@ -168,6 +170,20 @@ export class AuthEffects {
           map((res) => AuthActions.resetPasswordSuccess({ message: res.message })),
           catchError((err) =>
             of(AuthActions.resetPasswordFailure({ error: err.error?.message || 'Reset failed' })),
+          ),
+        ),
+      ),
+    ),
+  );
+
+  updateProfile$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(AuthActions.updateProfile),
+      switchMap(({ request }) =>
+        this.userService.updateProfile(request).pipe(
+          map((user) => AuthActions.updateProfileSuccess({ user })),
+          catchError((err) =>
+            of(AuthActions.updateProfileFailure({ error: err.error?.message || 'Update failed' })),
           ),
         ),
       ),

@@ -1,17 +1,24 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { AsyncPipe, CurrencyPipe, NgClass, DecimalPipe } from '@angular/common';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { BaseChartDirective } from 'ng2-charts';
+import type { ChartConfiguration } from 'chart.js';
 import {
   selectDashboardSummary,
   selectDashboardLoading,
+  selectMonthlyTrends,
 } from '../../store/dashboard/dashboard.selectors';
-import { loadDashboardSummary } from '../../store/dashboard/dashboard.actions';
+import {
+  loadDashboardSummary,
+  loadMonthlyTrends,
+} from '../../store/dashboard/dashboard.actions';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [AsyncPipe, CurrencyPipe, NgClass, DecimalPipe, RouterLink],
+  imports: [AsyncPipe, CurrencyPipe, NgClass, DecimalPipe, RouterLink, BaseChartDirective],
   template: `
     <div class="p-6 max-w-7xl mx-auto">
       <!-- Header -->
@@ -69,6 +76,38 @@ import { loadDashboardSummary } from '../../store/dashboard/dashboard.actions';
             <div class="mt-2 flex items-center gap-1">
               <div class="w-2 h-2 rounded-full bg-primary-400"></div>
               <span class="text-xs text-neutral-500">Income - Expenses</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+          <!-- Doughnut: spending by category -->
+          <div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
+            <h2 class="text-base font-semibold text-neutral-900 mb-4">Spending by Category</h2>
+            @if (summary.topExpensesByCategory.length === 0) {
+              <p class="text-sm text-neutral-400 text-center py-8">No expenses this month</p>
+            } @else {
+              <div class="h-56 flex items-center justify-center">
+                <canvas baseChart
+                  [data]="doughnutData()"
+                  type="doughnut"
+                  [options]="doughnutOptions">
+                </canvas>
+              </div>
+            }
+          </div>
+          <!-- Bar: monthly income vs expenses -->
+          <div class="bg-white rounded-xl border border-neutral-200 shadow-sm p-6">
+            <h2 class="text-base font-semibold text-neutral-900 mb-4">
+              Income vs Expenses — {{ currentYear }}
+            </h2>
+            <div class="h-56">
+              <canvas baseChart
+                [data]="barData()"
+                type="bar"
+                [options]="barOptions">
+              </canvas>
             </div>
           </div>
         </div>
@@ -167,16 +206,66 @@ export class DashboardComponent implements OnInit {
   readonly summary$ = this.store.select(selectDashboardSummary);
   readonly loading$ = this.store.select(selectDashboardLoading);
 
+  private readonly summary = toSignal(this.summary$);
+  private readonly trends = toSignal(this.store.select(selectMonthlyTrends));
+
   readonly currentYear = new Date().getFullYear();
   readonly currentMonth = new Date().getMonth() + 1;
   readonly monthName = new Date().toLocaleString('default', { month: 'long' });
 
+  private readonly MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+                                    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+  readonly doughnutData = computed<ChartConfiguration<'doughnut'>['data']>(() => {
+    const cats = this.summary()?.topExpensesByCategory ?? [];
+    return {
+      labels: cats.map((c) => c.categoryName),
+      datasets: [{
+        data: cats.map((c) => c.amount),
+        backgroundColor: cats.map((c) => c.categoryColor ?? '#94A3B8'),
+        borderWidth: 2,
+        borderColor: '#ffffff',
+      }],
+    };
+  });
+
+  readonly barData = computed<ChartConfiguration<'bar'>['data']>(() => {
+    const t = this.trends() ?? [];
+    return {
+      labels: this.MONTH_LABELS,
+      datasets: [
+        {
+          label: 'Income',
+          data: t.map((m) => m.income),
+          backgroundColor: '#10B981',
+          borderRadius: 4,
+        },
+        {
+          label: 'Expenses',
+          data: t.map((m) => m.expenses),
+          backgroundColor: '#EF4444',
+          borderRadius: 4,
+        },
+      ],
+    };
+  });
+
+  readonly doughnutOptions: ChartConfiguration<'doughnut'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 12 } } } },
+    cutout: '65%',
+  };
+
+  readonly barOptions: ChartConfiguration<'bar'>['options'] = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: 'top', labels: { boxWidth: 12, font: { size: 12 } } } },
+    scales: { y: { beginAtZero: true, ticks: { font: { size: 11 } } } },
+  };
+
   ngOnInit(): void {
-    this.store.dispatch(
-      loadDashboardSummary({
-        year: this.currentYear,
-        month: this.currentMonth,
-      }),
-    );
+    this.store.dispatch(loadDashboardSummary({ year: this.currentYear, month: this.currentMonth }));
+    this.store.dispatch(loadMonthlyTrends({ year: this.currentYear }));
   }
 }

@@ -1,0 +1,23 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "backend",
+      "runtimeExecutable": "mvn",
+      "runtimeArgs": ["spring-boot:run", "-f", "backend/pom.xml"],
+      "port": 8080
+    },
+    {
+      "name": "frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start", "--prefix", "frontend"],
+      "port": 4200
+    },
+    {
+      "name": "infra",
+      "runtimeExecutable": "docker",
+      "runtimeArgs": ["compose", "-f", "infra/docker-compose.yml", "up", "-d"],
+      "port": 5432
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/fintrack
-    username: fintrack
-    password: fintrack_secret
+    username: postgres
+    password: Ronaldo@23
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -34,3 +34,6 @@ app:
   mail:
     from: noreply@fintrack.dev
     verification-url: http://localhost:4200/auth/verify-email
+    password-reset-url: http://localhost:4200/auth/reset-password
+  password-reset:
+    token-ttl-seconds: 3600

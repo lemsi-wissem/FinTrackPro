@@ -44,6 +44,36 @@ public class GlobalExceptionHandler {
         return buildResponse(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
+    @ExceptionHandler(com.fintrack.domain.exception.CategoryNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleCategoryNotFound(
+            com.fintrack.domain.exception.CategoryNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(com.fintrack.domain.exception.CategoryAlreadyExistsException.class)
+    public ResponseEntity<ApiErrorResponse> handleCategoryAlreadyExists(
+            com.fintrack.domain.exception.CategoryAlreadyExistsException ex) {
+        return buildResponse(HttpStatus.CONFLICT, ex.getMessage());
+    }
+
+    @ExceptionHandler(com.fintrack.domain.exception.TransactionNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleTransactionNotFound(
+            com.fintrack.domain.exception.TransactionNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(com.fintrack.domain.exception.BudgetNotFoundException.class)
+    public ResponseEntity<ApiErrorResponse> handleBudgetNotFound(
+            com.fintrack.domain.exception.BudgetNotFoundException ex) {
+        return buildResponse(HttpStatus.NOT_FOUND, ex.getMessage());
+    }
+
+    @ExceptionHandler(com.fintrack.domain.exception.AccessForbiddenException.class)
+    public ResponseEntity<ApiErrorResponse> handleAccessForbidden(
+            com.fintrack.domain.exception.AccessForbiddenException ex) {
+        return buildResponse(HttpStatus.FORBIDDEN, ex.getMessage());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         String message = ex.getBindingResult().getFieldErrors().stream()

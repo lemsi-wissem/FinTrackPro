@@ -1,11 +1,15 @@
 package com.fintrack.web.controller;
 
 import com.fintrack.domain.port.in.*;
+import com.fintrack.domain.port.in.ForgotPasswordUseCase.ForgotPasswordCommand;
 import com.fintrack.domain.port.in.LoginUserUseCase.AuthTokens;
 import com.fintrack.domain.port.in.LoginUserUseCase.LoginCommand;
 import com.fintrack.domain.port.in.RegisterUserUseCase.RegisterUserCommand;
+import com.fintrack.domain.port.in.ResetPasswordUseCase.ResetPasswordCommand;
+import com.fintrack.web.dto.request.ForgotPasswordRequest;
 import com.fintrack.web.dto.request.LoginRequest;
 import com.fintrack.web.dto.request.RegisterRequest;
+import com.fintrack.web.dto.request.ResetPasswordRequest;
 import com.fintrack.web.dto.response.AuthResponse;
 import com.fintrack.web.dto.response.MessageResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,6 +33,8 @@ public class AuthController {
     private final VerifyEmailUseCase verifyEmailUseCase;
     private final RefreshTokenUseCase refreshTokenUseCase;
     private final LogoutUserUseCase logoutUseCase;
+    private final ForgotPasswordUseCase forgotPasswordUseCase;
+    private final ResetPasswordUseCase resetPasswordUseCase;
 
     @PostMapping("/register")
     public ResponseEntity<MessageResponse> register(@Valid @RequestBody RegisterRequest request) {
@@ -76,6 +82,20 @@ public class AuthController {
         }
         clearRefreshTokenCookie(response);
         return ResponseEntity.ok(new MessageResponse("Logged out successfully."));
+    }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<MessageResponse> forgotPassword(@Valid @RequestBody ForgotPasswordRequest request) {
+        forgotPasswordUseCase.requestPasswordReset(new ForgotPasswordCommand(request.email()));
+        // Always return 200 to prevent email enumeration attacks
+        return ResponseEntity.ok(new MessageResponse(
+                "If that email address is registered, you will receive a password reset link shortly."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<MessageResponse> resetPassword(@Valid @RequestBody ResetPasswordRequest request) {
+        resetPasswordUseCase.resetPassword(new ResetPasswordCommand(request.token(), request.newPassword()));
+        return ResponseEntity.ok(new MessageResponse("Your password has been reset successfully."));
     }
 
     private String extractAccessToken(HttpServletRequest request) {

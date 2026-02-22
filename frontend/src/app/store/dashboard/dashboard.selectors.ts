@@ -12,3 +12,7 @@ export const selectDashboardLoading = createSelector(
   selectDashboardState,
   (s) => s.loading,
 );
+export const selectMonthlyTrends = createSelector(
+  selectDashboardState,
+  (s) => s.monthlyTrends,
+);

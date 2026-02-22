@@ -45,6 +45,13 @@ export const routes: Routes = [
             './features/categories/category-list/category-list.component'
           ).then((m) => m.CategoryListComponent),
       },
+      {
+        path: 'profile',
+        loadComponent: () =>
+          import('./features/profile/profile.component').then(
+            (m) => m.ProfileComponent,
+          ),
+      },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

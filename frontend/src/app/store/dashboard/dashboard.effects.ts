@@ -31,4 +31,22 @@ export class DashboardEffects {
       ),
     ),
   );
+
+  loadMonthlyTrends$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(DashboardActions.loadMonthlyTrends),
+      switchMap(({ year }) =>
+        this.dashboardService.getMonthlyTrends(year).pipe(
+          map((res) => DashboardActions.loadMonthlyTrendsSuccess({ trends: res.data })),
+          catchError((err) =>
+            of(
+              DashboardActions.loadMonthlyTrendsFailure({
+                error: err.error?.message || 'Failed to load trends',
+              }),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
 }

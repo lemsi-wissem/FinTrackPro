@@ -147,11 +147,28 @@ public class AppConfig {
         return new DeleteBudgetUseCaseImpl(budgetRepo);
     }
 
-    // Dashboard use case
+    // Dashboard use cases
     @Bean
     public GetDashboardSummaryUseCase getDashboardSummaryUseCase(TransactionRepositoryPort transactionRepo,
                                                                    CategoryRepositoryPort categoryRepo) {
         return new GetDashboardSummaryUseCaseImpl(transactionRepo, categoryRepo);
+    }
+
+    @Bean
+    public GetMonthlyTrendsUseCase getMonthlyTrendsUseCase(TransactionRepositoryPort transactionRepo) {
+        return new GetMonthlyTrendsUseCaseImpl(transactionRepo);
+    }
+
+    // User profile use cases
+    @Bean
+    public UpdateProfileUseCase updateProfileUseCase(UserRepositoryPort userRepo) {
+        return new UpdateProfileUseCaseImpl(userRepo);
+    }
+
+    @Bean
+    public ChangePasswordUseCase changePasswordUseCase(UserRepositoryPort userRepo,
+                                                        PasswordEncoderPort encoder) {
+        return new ChangePasswordUseCaseImpl(userRepo, encoder);
     }
 
     // Notification use cases

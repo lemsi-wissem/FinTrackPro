@@ -20,4 +20,19 @@ export const dashboardReducer = createReducer(
     loading: false,
     error,
   })),
+
+  on(DashboardActions.loadMonthlyTrends, (state) => ({
+    ...state,
+    trendsLoading: true,
+  })),
+  on(DashboardActions.loadMonthlyTrendsSuccess, (state, { trends }) => ({
+    ...state,
+    trendsLoading: false,
+    monthlyTrends: trends,
+  })),
+  on(DashboardActions.loadMonthlyTrendsFailure, (state, { error }) => ({
+    ...state,
+    trendsLoading: false,
+    error,
+  })),
 );

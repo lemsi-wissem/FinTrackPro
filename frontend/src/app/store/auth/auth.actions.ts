@@ -47,5 +47,19 @@ export const resetPassword = createAction('[Auth] Reset Password', props<{ reque
 export const resetPasswordSuccess = createAction('[Auth] Reset Password Success', props<{ message: string }>());
 export const resetPasswordFailure = createAction('[Auth] Reset Password Failure', props<{ error: string }>());
 
+// Update Profile
+export const updateProfile = createAction(
+  '[Auth] Update Profile',
+  props<{ request: { firstName: string; lastName: string } }>(),
+);
+export const updateProfileSuccess = createAction(
+  '[Auth] Update Profile Success',
+  props<{ user: User }>(),
+);
+export const updateProfileFailure = createAction(
+  '[Auth] Update Profile Failure',
+  props<{ error: string }>(),
+);
+
 // Clear error
 export const clearAuthError = createAction('[Auth] Clear Error');

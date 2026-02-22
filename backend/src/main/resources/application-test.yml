@@ -12,6 +12,9 @@ spring:
         dialect: org.hibernate.dialect.H2Dialect
   flyway:
     enabled: false
+  mail:
+    host: localhost
+    port: 25
   data:
     redis:
       host: localhost
@@ -27,3 +30,4 @@ app:
   mail:
     from: noreply@fintrack.test
     verification-url: http://localhost:4200/auth/verify-email
+    password-reset-url: http://localhost:4200/auth/reset-password
